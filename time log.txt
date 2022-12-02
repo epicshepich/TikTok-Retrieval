@@ -1,8 +1,8 @@
-scraping: 2 hours 21 minutes
+scraping: - hours 32 minutes
 processing:
 experiments:
 plots:
 presentation:
 paper:
 
-total: 
+total:
