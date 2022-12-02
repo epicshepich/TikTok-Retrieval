@@ -95,13 +95,13 @@ async function scrape_tiktoks(n_to_scrape, delay=300){
         console.log(i)
         await timer(delay);
         tiktoks.push(extract_tiktok_info());
-        await timer(delay);
         next_tiktok();
     }
     return tiktoks;
 }
 
 /*
-results = await scrape_tiktoks(100, delay=300);
-JSON.stringify(results);
+results = await scrape_tiktoks(100, delay=2000);
+//Wait for comments to load.
+console.log(JSON.stringify(results));
 */
