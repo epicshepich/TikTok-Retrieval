@@ -15,7 +15,8 @@ def download_file(url,filename):
     return filename
 
 
-def download_tiktoks_from_info(json_info_filepath, retry_missing=False):
+def download_tiktoks_from_info(json_info_filepath, retry_missing=False,
+    bugged_indices_that_randomly_take_forever={}):
     """Uses `download_file` to download videos and coverphotos corresponding to
     TikToks whose info is scraped into the `json_info_filepath`. Includes error
     handling for `blob:` links, and logs successful results with timestap of download."""
@@ -28,15 +29,15 @@ def download_tiktoks_from_info(json_info_filepath, retry_missing=False):
     master = json.loads(master_text)
     #Successful downloads have their info logged to master.json, including a
     #new download-timestamp attribute.
-    ids_in_master = set([tiktok["id"] for tiktok in master])
-    missing_downloads = set([tiktok["id"] for tiktok in master if tiktok["download-timestamp"] is None])
+    missing_downloads = set([id for (id,tiktok) in master.items() if tiktok["download-timestamp"] is None])
 
     for (i,tiktok) in enumerate(info):
-        if tiktok["id"] in ids_in_master:
+        if tiktok["id"] in master:
             if not (retry_missing and tiktok["id"] in missing_downloads):
                 continue
             #Skip TikToks that have already been downloaded.
-
+        if i+1 in bugged_indices_that_randomly_take_forever.get(json_info_filepath,[]):
+            continue
         print(f"Downloading {i+1} / {len(info)}")
         try:
             download_file(tiktok["video-src"],f'videos/{tiktok["id"]}.mp4')
@@ -50,8 +51,7 @@ def download_tiktoks_from_info(json_info_filepath, retry_missing=False):
             #indicate that the download is missing with a NULL value for the
             #download-timestamp.
 
-        master.append(tiktok)
-        ids_in_master.add(tiktok["id"])
+        master[tiktok["id"]] = tiktok
 
         if (i+1) % 5 == 0:
             with open("master.json","w",encoding="utf-8") as f:
@@ -63,4 +63,13 @@ def download_tiktoks_from_info(json_info_filepath, retry_missing=False):
 
 
 if __name__ == "__main__":
-    download_tiktoks_from_info("info/batch_2.json",retry_missing=True)
+    download_tiktoks_from_info(
+        "info/batch_7.json",
+        retry_missing=True,
+        bugged_indices_that_randomly_take_forever={
+            "batch_1":[39],
+            "batch_2":[184],
+            "batch_3":[],
+            "batch_4":[]
+        }
+    )
