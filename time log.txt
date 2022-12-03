@@ -1,4 +1,4 @@
-data acquisition: 9 hours 47 minutes
+data acquisition: 21 hours 45 minutes
 experiments:
 analysis of results:
 presentation:

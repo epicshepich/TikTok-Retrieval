@@ -20,7 +20,14 @@ function clear_history(){
     document.querySelector("#history-list").innerHTML = "";
     initialize_history();
 }
-function read_history(){return JSON.parse(window.localStorage["jimtok-history"]);}
+function read_history(){
+    try{
+        return JSON.parse(window.localStorage["jimtok-history"]);
+    } catch(e){
+        initialize_history();
+        return JSON.parse(window.localStorage["jimtok-history"]);
+    }
+}
 function write_history(history){window.localStorage["jimtok-history"] = JSON.stringify(history);}
 function create_history_listing(video_id){
     return `<li><a onclick="load_tiktok(TIKTOKS['${video_id}'])">${video_id}</a></li>`;
@@ -31,7 +38,6 @@ function push_history(video_id){
     write_history(h);
     document.querySelector("#history-list").innerHTML += create_history_listing(video_id);
 }
-initialize_history();
 /*Crete functions to track viewing history.*/
 
 

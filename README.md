@@ -131,17 +131,34 @@ The viewer itself is constructed such that it crudely resembles the TikTok deskt
 ### Instructions to Participants
 Participants were given the following instructions.
 
-    The goal of my experiment is to improve the process of searching for TikToks. In order to determine what works best, I need to quantify retrieval performance. The way to do this is to come up with a set of test queries with known targets and see if the system recommended the correct target for a given query.    
+    The goal of my experiment is to improve the process of searching for TikToks. In order to determine what works best, I need to quantify retrieval performance. The way to do this is to come up with a set of test queries with known targets and see if the system identifies the correct video for a given query.    
 
     I'm requesting your help to come up with queries in order to avoid injecting my own bias into the experiment. What I need you to do is:
 
-    1. Go to tiktok.shepich.com and watch a handful of TikToks.
+    1. Go to jimtok.shepich.com and watch a handful of TikToks. It may take a while for the page to load.
     2. Do something else for an hour or so, in order to reset your short-term memory.
     3. Think of a few videos that stood out to you. For each one, come up with a query that you would use to search for it.
     4. Find the IDs corresponding to your query targets (either using the View History or Search tabs), and send me a list of (query text, query target id) pairs.
 
     Note: please come up with queries that are specific to an individual TikTok, rather than a trend or collection. My goal is to improve the ability to recall specific videos.
 
+    Also note: the search feature does not work very well, so don't bank on that being very useful when you go back and look for IDs (hopefully I can change that with this project).
+
     WARNING: these TikToks have not been content-filtered, so participate at your own risk. Massive spoilers for Attack on Titan and One Piece ahead.
 
+    Website controls:
+
+     - Up/Left arrow: previous video in queue
+     - Right/Down arrow: next video in queue
+     - Space: play/pause video (first video will start paused)
+     - Press "Enter" while typing in search bar to run your query (wait until page is loaded before searching)
+     - Click on an ID in the View History or Search results to watch that video
+     - Note: clicking on a link will not change the queue or your position in it, so you can click links without worrying about losing your place.
+
     Thank you for participating!
+
+### Basic Index
+
+UNIDECODE (converts greek letters and emojis into text)
+ASCII
+~20 seconds

@@ -4,14 +4,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
     <link rel="stylesheet" type="text/css" href="./style.css">
-    <link data-rh="true" rel="shortcut icon" src="./favicon.png" type="image/x-icon">
+    <link id="favicon" rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    <script src="./svg_icons.js"></script>
+    <script>
+        document.querySelector("#favicon").href = favicon;
+    </script>
     <title>JimTok</title>
 </head>
 
 <body>
-<script src="./svg_icons.js"></script>
 
 <?php
+ini_set('memory_limit', '1024M');
+//Increase memory size limit for index.
 $DATA_PATH = "./";
 if (!file_exists($DATA_PATH."/cleaned_master.json")) {
     $DATA_PATH = "../";
@@ -76,7 +81,11 @@ echo "<script>const DATA_PATH = '".$DATA_PATH."';const TIKTOKS = ".file_get_cont
         </div>
 
         <div id="search" class="sidebar-content">
-            <div id="search-bar"></div>
+            <div id="search-bar-container"><input type="text" id="search-bar"/></div>
+            <div id="search-results-container">
+                <ol id="search-results">
+                </ol>
+            </div>
         </div>
     </div>
 
@@ -89,5 +98,8 @@ echo "<script>const DATA_PATH = '".$DATA_PATH."';const TIKTOKS = ".file_get_cont
 </body>
 
 <script src="./main.js"></script>
+<?php echo "<script>const INDEX = ".file_get_contents(__DIR__."/".$DATA_PATH."basic_index.json").";</script>";?>
+<!--Load the index and retrieval code after the rest of the page has loaded.-->
+<script src="./retrieval.js"></script>
 
 </html>
