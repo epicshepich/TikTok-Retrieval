@@ -162,3 +162,12 @@ Participants were given the following instructions.
 UNIDECODE (converts greek letters and emojis into text)
 ASCII
 ~20 seconds
+
+
+
+
+
+experiment took about an hour to run on my single query
+
+
+Unidecode 1.3.6
