@@ -1,3 +1,6 @@
+/*This script facilitates the scraping of information from TikTok videos on
+the desktop site.*/
+
 function timer(ms) {
     /*Call `await timer()` to synchronously block the execution of the
     next line for an input duration, in milliseconds. Copied from:
@@ -94,6 +97,7 @@ async function scrape_tiktoks(n_to_scrape, delay=300){
     for(i=0;i<n_to_scrape;i++){
         console.log(i)
         await timer(delay);
+        //Wait for the page to reload before extracting the information.
         tiktoks.push(extract_tiktok_info());
         next_tiktok();
     }

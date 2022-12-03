@@ -1,3 +1,6 @@
+/*This script implements the ranked retrieval used in the search feature of the
+viewer application.*/
+
 function normalize(text){
 
 }

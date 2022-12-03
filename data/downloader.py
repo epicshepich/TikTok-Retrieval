@@ -1,10 +1,14 @@
+"""This script is used to download TikTok videos and coverphotos from links
+in a batch of scraped JSON data, such as that in the data/info directory."""
+
 import requests
 import http
 import json
 import time
 
 def download_file(url,filename):
-    """Shamelessly copied from https://stackoverflow.com/questions/53196594/web-scraping-videos"""
+    """Download a resource from `url` and save it as `filename`. Code obtained
+    from https://stackoverflow.com/questions/53196594/web-scraping-videos"""
     # NOTE the stream=True parameter
     r = requests.get(url, stream=True)
     with open(filename, 'wb') as f:
@@ -19,7 +23,16 @@ def download_tiktoks_from_info(json_info_filepath, retry_missing=False,
     bugged_indices_that_randomly_take_forever={}):
     """Uses `download_file` to download videos and coverphotos corresponding to
     TikToks whose info is scraped into the `json_info_filepath`. Includes error
-    handling for `blob:` links, and logs successful results with timestap of download."""
+    handling for `blob:` links, and logs successful results with timestap of download.
+
+    # Keyword Arguments
+
+        - `retry_missing`: when enabled, IDs that are already in `master.json`
+            but were not successfully downloaded will be re-tried
+        - `bugged_indices_that_randomly_take_forever`: a dictionary of lists of
+            indices for each batch file that are manually identified to
+            mysteriously cause the program to hang, and thus must be skipped.
+    """
     with open(json_info_filepath,"r",encoding="utf-8") as f:
         info_text = f.read()
     info = json.loads(info_text)
@@ -64,10 +77,10 @@ def download_tiktoks_from_info(json_info_filepath, retry_missing=False,
 
 if __name__ == "__main__":
     download_tiktoks_from_info(
-        "info/batch_7.json",
+        "info/batch_1.json",
         retry_missing=True,
         bugged_indices_that_randomly_take_forever={
-            "info/batch_1":[39],
-            "info/batch_2":[184]
+            "info/batch_1.json":[39],
+            "info/batch_2.json":[184]
         }
     )

@@ -1,3 +1,5 @@
+/*This script controls the interactivity of the viewer application.*/
+
 function switch_tabs(tab){
     for(element of document.querySelectorAll(".sidebar-content")){
         element.style.setProperty("display","none");
