@@ -1,5 +1,7 @@
 """This script uses the pytesseract interface for Tesseract OCR to extract
-text from coverphotos in the `data/coverphotos/` directory."""
+text from coverphotos in the `data/coverphotos/` directory.
+
+Reference: https://builtin.com/data-science/python-ocr"""
 from PIL import Image, UnidentifiedImageError
 import pytesseract
 import numpy as np

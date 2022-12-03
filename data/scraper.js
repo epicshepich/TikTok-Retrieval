@@ -54,7 +54,7 @@ function extract_tiktok_info(){
     info["creator-username"] = "@" + document.querySelector("[data-e2e='browse-username']").innerText;
     nickname_field = document.querySelector("[data-e2e='browser-nickname']").innerText;
     info["creator-nickname"] = nickname_field.split("\n·\n")[0];
-    info["timeposted"] = nickname_field.split("\n·\n")[1];
+    info["time-posted"] = nickname_field.split("\n·\n")[1];
 
     music_field = document.querySelector("[data-e2e='browse-music']").children[0];
     info["music-title"] = music_field.innerText;

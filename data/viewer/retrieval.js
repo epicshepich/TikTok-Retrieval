@@ -17,7 +17,6 @@ function vectorize_query(q,method="binary"){
             for(term of query_tokens){
                 query_vector[term] = 1;
             }
-
     }
 
 }

@@ -1,15 +1,48 @@
+@font-face {
+    font-family: Fira;
+    src: url('FiraSans-Regular.ttf');
+}
+
+:root {
+
+    --shading:linear-gradient(to bottom , rgba(255,255,255,0.2) , rgba(0,0,0,0), rgba(0,0,0,0.2));
+    --shading-dark:linear-gradient(to bottom , rgba(0,0,0,0.1) , rgba(0,0,0,0.4));
+    --shading-light:linear-gradient(to bottom , rgba(255,255,255,0.4) , rgba(0,0,0,0), rgba(0,0,0,0.4));
+    --silver: linear-gradient(45deg, #AEB2B8, #C7C9CB, #D7D7D8, #D7D7D8, #C7C9CB, #AEB2B8, #959BA3);
+    --silver-right: linear-gradient(45deg, #C7C9CB, #D7D7D8, #D7D7D8, #C7C9CB, #AEB2B8, #959BA3);
+    /*https://www.schemecolor.com/light-silver-gradient.php)*/
+    --navy-blue:#091b75;
+    --azure:#4f67db;
+    --charcoal:#333333;
+    font-size:120%;
+
+}
+
 html,body {
   height: 100%;
+  max-height:100%;
   box-sizing: border-box;
   overflow:hidden;
+  font-family: Fira;
+}
+
+hr{
+    border: 0em solid black;
+    border-top: 0.1rem solid black;
+}
+
+a{
+    color:var(--azure);
+    text-decoration:underline;
 }
 
 #main-container{
     display:grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     /*Minmax statement prevents resizing.*/
-    align-items: center;
+    align-items: flex-start;
     height: 100%;
+    max-height: 100%!important;
     overflow:hidden;
 }
 
@@ -19,7 +52,7 @@ html,body {
     width: 100%;
     height: 100%;
     overflow:hidden;
-    max-height:100%;
+    max-height:100%!important;
 }
 
 #video{
@@ -33,20 +66,28 @@ html,body {
     grid-column:2;
     width: 100%;
     height: 100%;
+    max-height:100%!important;
+    overflow-x:hidden;
 }
 
 #tab-selector{
-    height:5%;
+    height:2rem;
     display:grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
 }
 
 
 .tab{
+    height:2rem;
     border: 0.05rem solid black;
     border-radius: 0.6rem;
     text-align:center;
     font-size:1.25rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-content: center;
 }
 
 .tab:hover{
@@ -58,15 +99,31 @@ html,body {
 }
 
 .sidebar-content{
-    height:95%;
-    width:100%;
     overflow-y:auto;
     overflow-x:hidden;
     padding:1rem;
+    flex-direction:column;
+}
+
+.info-field{
+    display:block;
+    border: solid black 0.05rem;
+    border-radius: 0.6rem;
+    margin-bottom:0.5rem;
+    padding: 1rem;
 }
 
 #info{
     display:flex;
+}
+
+#comments{
+    display:flex;
+    flex-direction:column;
+}
+
+.comment{
+    display:block;
 }
 
 #history,#search{

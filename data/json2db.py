@@ -8,6 +8,14 @@ start = time.time()
 with open("master.json","r",encoding="utf-8") as f:
     master_text = f.read()
 tiktoks = json.loads(master_text)
+cleaned_tiktoks = {}
+#Keep track of which TikToks didn't have any errors.
+with open("ocr.json","r",encoding="utf-8") as f:
+    ocr_text = f.read()
+ocr_results = json.loads(ocr_text)
+with open("speech_to_text.json","r",encoding="utf-8") as f:
+    sr_text = f.read()
+sr_results = json.loads(sr_text)
 print(f"Completed in {time.time()-start:.2f} seconds.\n")
 
 print("Reading existing results from database...")
@@ -19,26 +27,12 @@ ids_in_database = set(cur.fetchall())
 con.close()
 print(f"Completed in {time.time()-start:.2f} seconds.\n")
 
-print("Performing OCR on cover photos...")
-start = time.time()
-for (i,tiktok) in enumerate(tiktoks):
-    if tiktok["id"] in ids_in_database:
-        continue
-
-    print(f"Extracting text {i+1} / {len(tiktoks)}")
-
-    tiktok["speech-to-text"] = ""
-    tiktok["coverphoto-ocr"] = ""
-
-
-print(f"Completed in {time.time()-start:.2f} seconds.\n")
-
 
 print("Writing results to database...")
 start = time.time()
 con = sqlite3.connect("tiktoks.db")
 cur = con.cursor()
-for (i,tiktok) in enumerate(tiktoks):
+for (i,(id,tiktok)) in enumerate(tiktoks.items()):
     print(f"Writing result {i+1} / {len(tiktoks)}")
     cur.execute(
     """INSERT INTO tiktoks(
@@ -67,8 +61,8 @@ for (i,tiktok) in enumerate(tiktoks):
         tiktok["video-src"],
         tiktok["coverphoto-src"],
         tiktok["music-src"],
-        tiktok["speech-to-text"],
-        tiktok["coverphoto-ocr"],
+        sr_results.get(id,None),
+        ocr_results.get(id,None),
         tiktok["music-title"],
         tiktok["like-count"],
         tiktok["comment-count"],
@@ -80,6 +74,12 @@ for (i,tiktok) in enumerate(tiktoks):
         tiktok["download-timestamp"]
     )
     )
+
+    if (tiktok["download-timestamp"] is not None) and (sr_results.get(id,None) is not None) and (ocr_results.get(id,None) is not None):
+        cleaned_tiktoks[id] = tiktok
+        cleaned_tiktoks[id]["speech-to-text"] = sr_results[id]
+        cleaned_tiktoks[id]["coverphoto-ocr"] = ocr_results[id]
+        #Track which TikToks are error-free.
 
     for comment in tiktok["comments"]:
         cur.execute("""INSERT INTO comments(
@@ -95,7 +95,7 @@ for (i,tiktok) in enumerate(tiktoks):
             comment["like-count"],
             comment["replies-count"],
             comment["comment-text"],
-            comment["commenter-name"],
+            comment["commenter-username"],
             comment["time-posted"]
         )
         )
@@ -104,3 +104,6 @@ for (i,tiktok) in enumerate(tiktoks):
 con.commit()
 con.close()
 print(f"Completed in {time.time()-start:.2f} seconds.\n")
+
+with open("cleaned_master.json","w",encoding="utf-8") as f:
+    json.dump(cleaned_tiktoks, f, indent=4)
