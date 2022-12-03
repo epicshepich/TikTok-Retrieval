@@ -1,7 +1,6 @@
-scraping: - hours 32 minutes
-processing:
+data acquisition: 9 hours 47 minutes
 experiments:
-plots:
+analysis of results:
 presentation:
 paper:
 

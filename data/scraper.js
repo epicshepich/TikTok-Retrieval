@@ -102,6 +102,5 @@ async function scrape_tiktoks(n_to_scrape, delay=300){
 
 /*
 results = await scrape_tiktoks(100, delay=2000);
-//Wait for comments to load.
 console.log(JSON.stringify(results));
 */

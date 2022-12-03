@@ -67,9 +67,7 @@ if __name__ == "__main__":
         "info/batch_7.json",
         retry_missing=True,
         bugged_indices_that_randomly_take_forever={
-            "batch_1":[39],
-            "batch_2":[184],
-            "batch_3":[],
-            "batch_4":[]
+            "info/batch_1":[39],
+            "info/batch_2":[184]
         }
     )
