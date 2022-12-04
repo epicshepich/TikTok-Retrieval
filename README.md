@@ -1,11 +1,19 @@
-# TikTok-Retrieval
+---
+title: TikTok Retrieval
+subtitle: Experiments to Determine Best Practices in Ranked Retrieval of TikToks
+author: Jim Shepich III
+date: 5 December 2022
+---
+
+
+# Overview
 Information retrieval experiments on a small corpus of TikToks.
 
-## Data Acquisition
+# Data Acquisition
 
 This section details the processes by which the data were scraped, downloaded, processed, cleaned, and loaded into `data/tiktoks.db` for analysis.
 
-### Scraping Information
+## Scraping Information
 
 The script `data/scraper.js` is used to extract information from TikTok's desktop site [tiktok.com](https://tiktok.com). To use this script, first ensure that you are viewing the layout in which the comments section is visible, as shown below. Clicking a video in the default layout will bring you to this layout.
 
@@ -42,7 +50,7 @@ The `scrape_tiktoks` function iteratively calls the `extract_tiktok_information`
 
 I copied code from [tutorialspoint.com/javascript-sleep-function](https://www.tutorialspoint.com/javascript-sleep-function) for the `delay` function, which blocks execution for a set duration.
 
-#### To Do
+### To Do
 - Use event listeners to ensure that comments have loaded before scraping instead of waiting a fixed amount of time.
     - Historically, I've had difficulty getting this to work, especially on enterprise websites, which is why I did it the way I did it.
 - Scroll to the bottom of the comments section to collect all comments; expand replies to get nested comments.
@@ -53,7 +61,7 @@ I copied code from [tutorialspoint.com/javascript-sleep-function](https://www.tu
 - Scraper does not have a way to download auto-generated speech-to-text captions because closed captions are not available yet on the desktop app.
 
 
-### Downloading Videos and Covers
+## Downloading Videos and Covers
 
 Notably, JavaScript does not make it easy to automate downloading, so the Python script `data/downloader.py` is used to download the videos and coverphotos whose src links are included the JSON files containing raw scraped data. Beware: I looked at the values of the `expires` key for a few of these links, and it seems that they may only be valid for 8-12 hours, so don't wait to download the videos after you have scraped their info.
 
@@ -78,7 +86,7 @@ Videos that were successfully downloaded have a non-null `download-timestamp` at
 Running `data/download.py` a second time on a raw-info file will skip videos that were successfully downloaded the first time (as indicated by their non-null `download-timestamp` in `data/master.json`) and only re-try videos that were not successfully downloaded; if one of these downloads succeeds, the corresponding entry in `data/master.json` is overwritten.
 
 
-### Optical Character Recognition
+## Optical Character Recognition
 
 Following the tutorial at [builtin.com/data-science/python-ocr](https://builtin.com/data-science/python-ocr), the open source Tesseract OCR engine (v5.2.0.20220712) is used to extract text from cover photos. The script `data/ocr.py` uses the `pytesseract` library (v0.3.10), which provides a Python-based interface for Tesseract, to extract text from all of the cover photos whose TikTok ids are present in `data/master.json` and whose corresponding files (`{id}.jpg`) are present in `data/coverphotos`. Results are saved as a dictionary of (id,recognized_string) pairs to `data/ocr.json`.
 
@@ -87,7 +95,7 @@ Note: because `data/downloader.py` also logs information for TikToks that were u
 Performing OCR over the whole corpus of cover photos took ~45 minutes.
 
 
-### Speech-to-Text
+## Speech-to-Text
 
 Following the tutorial at [towardsdatascience.com/extracting-speech-from-video-using-python-f0ec7e312d38](https://towardsdatascience.com/extracting-speech-from-video-using-python-f0ec7e312d38), the Python `SpeechRecognition` library (v3.8.1) is used to transcribe speech from the TikToks.
 
@@ -99,7 +107,7 @@ Google Speech returns a "Bad Request" error for audio files that are longer than
 
 Performing speech recognition on the entire corpus took around 3 hours.
 
-### ETL
+## ETL
 
 The Python script `data/json2db.py` is used to clean and combine the information in `data/master.json`, `data/ocr.json`, and `data/speech_to_text.json` and write them to `tiktoks.db`; a SQLite database that will serve as the data warehouse for the experiments.
 
@@ -115,7 +123,7 @@ The corpus of cleaned TikToks contains a total of 1462 TikToks. Their info is sa
 
 
 
-## Generating Test Queries
+# Generating Test Queries
 
 TikTok retrieval is somewhat atypical in that often, when people are searching for a TikTok, they are looking for a single specific video that they have seen before and have since lost track of. In terms of retrieval, this means that it is more common than not for a query to only have a single relevant document. In this project, I am specifically focusing on these single-target queries.
 
@@ -157,14 +165,47 @@ Participants were given the following instructions.
 
     Thank you for participating!
 
-### Basic Index
+## Basic Index
 
-UNIDECODE (converts greek letters and emojis into text)
-ASCII
-~20 seconds
+The basic index was generated with the Julia script `data/basic_index.jl` and saved to `data/basic_index.json`. I generated this index mostly as a convenience for the participants who helped generate queries for me. I used the following methodology, based mostly off my instincts:
+
+- All features (basic+sr+ocr+comments) indexed
+- All delimiter-like characters (consecutive whitespace, forward slashes, em-dashes, and two or more hyphens) are converted to spaces to preserve but standardize separation between alphanumeric substrings
+- Emojis, Greek letters, and a handful of other characters converted to English words using the `Unidecode.jl` (v1.3.6) package
+- All nonalphanumeric characters other than "@" for usernames, "#" for hashtag, and " " removed; all non-ASCII characters removed
+- 5-gram tokenization (to account for different morphologies in small documents and to combat spelling errors)
+
+I implemented a crude ranked retrieval algorithm in `data/viewer/retrieval.js`, which uses binary weighting for queries and tf-idf weighting for documents, all without normalization for simplicity's sake. Anecdotally, this retrieval system did not work very well for identifying specific videos, but it did work somewhat decently for finding videos related to a topic. For example, searching "One Piece" resulted in One Piece-related videos being ranked near the top, but searching "Rating Mugiwara Singing Jingle Bells" (which is exact text from a specific cover photo) resulted in Bella Poarch videos ranking near the top.
 
 
+# Experiments
 
+## Generating Results
+The experimentation and analysis of results were performed in `tiktok_retrieval.ipynb`. The results of the experiments are logged to `results.db`, which uses `initialize_results_db.sql` as its data definition script and `initialize_results_db.bat` initialize the database with just a click.
+
+A consistent normalization procedure is used across all experiments, except tokenization, which is used as an independent variable:
+- The `Unidecode.jl` library is used to convert emojis, Greek characters, and a small handful of other characters into English words describing the character; for example "😅" is unidecoded to ":sweat_smile:" and "α" is unidecoded to "alpha."
+- The `unicode.py` Python library is accessed via `PyCall` to decode all other Unicode characters (e.g. Japanese characters, which are translated to romaji), to ASCII.
+- The text is case-folded to lowercase.
+- The `[\s/—-]+` is used as a delimiter when word-tokenizing and is replaced with a single space when n-gram tokenizing (to act as a standard character to break up alphanumeric substrings).
+- All non-alphanumeric characters other than spaces, the @ symbol (used to denote usernames), and the # symbol (used in hashtags) are.
+
+The experiments essentially try every member of the Cartesian product of the following parameters to find what works best:
+
+- Word tokenization vs 4-, 5- ,6-, and 7-gram tokenization.
+- Every possible combination of speech-recognition text, text from OCR on coverphotos, and/or text from comments to enrich the basic text (creator username and nickname, description, and music title).
+- Using and not using field attributions to label terms according to which field they were extracted from.
+- Different weighting formulae for document vectors.
+
+Due to the fact that we are focusing on single-target queries, the metric we will use to evaluate performance is the average rank of the target in the similarity-ranked list. In the best case, this metric will be close to 1. If the retrieval system were to rank documents at random, we would expect the metric to be around ~731 (the midpoint of the list). If the metric is close to 1462, then we are probably sorting the ranked list backwards.
+
+In addition to the ranking results, the experiments also record index size (memory and vocabulary), construction time, and the time it takes to run queries.
+
+Testing each set of index parameters and each set of vector formula on all of the queries took around ~2 hours.
+
+## Summary of Significant Results
+
+For a more detailed analysis of the experimental results, refer to `tiktok_retrieval.ipynb`. Here, I will summarize the major findings and conclusions of the study:
 
 
 experiment took about an hour to run on my single query

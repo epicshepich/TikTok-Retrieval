@@ -25,6 +25,6 @@ CREATE TABLE ranking_results(
     experiment_id INT NOT NULL,
     query_id INT NOT NULL,
     retrieval_time FLOAT NOT NULL,
-    target_rank INT NOT NULL,
+    target_rank INT,
     FOREIGN KEY (experiment_id) REFERENCES experiments(experiment_id)
 );
