@@ -7,6 +7,7 @@ CREATE TABLE indexes(
     field_attributions INT NOT NULL,
     indexing_time FLOAT NOT NULL,
     storage INT NOT NULL,
+    vocab_size INT NOT NULL,
     PRIMARY KEY (index_id)
 );
 
