@@ -50,7 +50,8 @@ echo "<script>const DATA_PATH = '".$DATA_PATH."';const TIKTOKS = ".file_get_cont
                 &nbsp;
                 <span id="svg-comments"></span>
                 <span id="n-comments"></span>
-                <br />
+                <br /><hr / />
+                <span id="description"></span>
 
             </div>
             <script>

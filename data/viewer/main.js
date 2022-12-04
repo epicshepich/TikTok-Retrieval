@@ -75,6 +75,7 @@ function load_tiktok(info){
 
     document.querySelector("#n-likes").innerText = info["like-count"];
     document.querySelector("#n-comments").innerText = info["comment-count"];
+    document.querySelector("#description").innerText = info["description"];
 
     comment_string = "";
     for(comment of info["comments"]){
