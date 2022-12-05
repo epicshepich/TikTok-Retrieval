@@ -7,7 +7,9 @@ date: 5 December 2022
 
 
 # Overview
-Information retrieval experiments on a small corpus of TikToks.
+Information retrieval experiments on a small corpus of TikToks. Presentation link: [youtu.be/a9-PBN4HB8Q](https://youtu.be/a9-PBN4HB8Q).
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/a9-PBN4HB8Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 # Data Acquisition
 
@@ -205,10 +207,18 @@ Testing each set of index parameters and each set of vector formula on all of th
 
 ## Summary of Significant Results
 
-For a more detailed analysis of the experimental results, refer to `tiktok_retrieval.ipynb`. Here, I will summarize the major findings and conclusions of the study:
+For a more detailed analysis of the experimental results, refer to `tiktok_retrieval.ipynb`. Here, I will summarize the major findings and conclusions of the study. It took a little over an hour to run the experimental pipeline regardless of the number of queries. This probably means that computing document vector lengths was the rate-limiting step.
 
 
-experiment took about an hour to run on my single query
-
-
-Unidecode 1.3.6
+- Any extra text helps
+    - Top comments are most individually useful
+    - All three sources (comments, SR, OCR) together are best
+- Short n-grams provide best tokenization
+    - 4-grams most robust against missing targets, especially when targets aren't enriched and keywords are short
+- Best document weighting formula:
+    - No normalization: normalization unfairly penalizes enriched/more descriptive documents
+    - Binary term frequency: raw counts unfairly advantage spammier documents; due to the short-form nature, it is not unexpected to only mention a keyword once
+    - Probabilistic inverse document frequency: not all terms are equally useful as keywords
+- Biggest improvements in median rank with good descriptions and on-topic comments; biggest challenge is with purely visual videos
+- Attributing fields hurt performance: it doesn't matter where a keyword is found, all that matters is that it is there
+- 66% of targets ranked 1st with best methodology (4-gram, SR+OCR+C, no attributions, bpx); good but still room for improvement
