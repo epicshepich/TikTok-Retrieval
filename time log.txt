@@ -1,5 +1,5 @@
 data acquisition: 21 hours 45 minutes
-experiments & analysis: 13 hours 9 minutes
+experiments & analysis: 25 hours 52 minutes
 presentation: 0 hours 5 minutes
 paper:
 
